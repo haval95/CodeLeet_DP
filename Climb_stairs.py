@@ -15,4 +15,4 @@ def climbStairs(n: int) -> int:
     return one
     
 
-print(climbStairs(10))
+print(climbStairs(100))
