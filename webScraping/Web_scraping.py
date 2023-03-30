@@ -7,7 +7,7 @@ from colorama import Fore, Back, Style
 SOURCE_FILE = "rental_properties.csv"
 with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
-    writer.writerow(['Price/PLN','Utility Price','Availability', 'Bedrooms', 'Area/m2', 'Location']) # this is the header of the data
+    writer.writerow(['Price/PLN','Utility Price','Availability', 'Bedrooms', 'Area/m2', 'Location/Warsaw']) # this is the header of the data
 
     # Iterate over all pages
 
@@ -37,22 +37,22 @@ with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
             bills = "Bills Included"
         else:
             bills = "Bills not included"
-        price = pricing_data.text.strip().replace('\n', '').replace("PLN", "").replace(',','')
+        price = pricing_data.text.replace('\n', '').replace("PLN", "").replace(',','').strip()
         try:
-            available = data.find('div', class_="ribbon-inside").text.replace('\n', '').replace('Available from ','')
+            available = data.find('div', class_="ribbon-inside").text.replace('\n', '').replace('Available from ','').strip()
         except Exception:
             available = "N/A"
-        #details = data.find('div', class_="listing_details the_list_view").text.replace('\n', '')
-        area = data.find('span', class_="infosize").text.replace('\n', '').replace(' m2','')
-        location = data.find('div', class_="property_location_image").text.replace('\n', '')
+        area = data.find('span', class_="infosize").text.replace('\n', '').replace(' m2','').strip()
+        location = data.find('div', class_="property_location_image").text.replace('\n', '').replace("Warsaw", "").replace(",", "").strip()
         try:
-            bed = data.find('span', class_="inforoom").text.replace('\n', '')
+            bed = data.find('span', class_="inforoom").text.replace('\n', '').strip()
         except Exception:
             bed = "N/A"
 
-        info.append([price,bills,available, bed, area,location])
-
-    writer.writerows(info)
+        info.append([int(price),bills,available, bed, area,location])
+        
+    sorted_info = sorted(info, key=lambda x: x[0], reverse=True)
+    writer.writerows(sorted_info)
 
     print(Fore.GREEN + Back.WHITE + f" ALL {len(data_tag)} DATA LINES SAVED INTO A FILE NAMED: [ {SOURCE_FILE} ]", end="")
     print(Style.RESET_ALL)
