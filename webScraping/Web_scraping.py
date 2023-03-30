@@ -15,7 +15,7 @@ with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
     print(0, "%", flush=True, end="\r")
 
     data_tag = []  # an empty list to store the requested data
-    # REQUESTING DATA FROM rentflatpoland WEBSITE
+    #REQUESTING DATA FROM rentflatpoland WEBSITE
     for page_num in range(1, 8):
         url = f'https://rentflatpoland.com/advanced-search-2/page/{page_num}/?advanced_city=warsaw&advanced_area&no-rooms&no-bedrooms&min-m2&property-id&keywords&price_low=1000&price_max=25000&sf_paged=2'
         page = requests.get(url) # REQUESTING FROM THE SERVER
@@ -27,11 +27,16 @@ with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
     info = []
     print(Fore.LIGHTYELLOW_EX + "\n\nDONE")
     print(Style.RESET_ALL)
+    c=0
     for data in data_tag:
         pricing_data = data.find('div', class_="listing_unit_price_wrapper")
         bills_span = pricing_data.findAll('span')[1]
         bills = pricing_data.findAll('span')[1].text.replace("+", "").strip()
         bills_span.extract()
+        if bills in ["", "all in", "per month", "all in with bills included", "a month", "with all bills", "with bills"]:
+            bills = "Bills Included"
+        else:
+            bills = "Bills not included"
         price = pricing_data.text.strip().replace('\n', '').replace("PLN", "").replace(',','')
         try:
             available = data.find('div', class_="ribbon-inside").text.replace('\n', '').replace('Available from ','')
