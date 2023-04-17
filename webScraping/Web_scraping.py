@@ -27,11 +27,10 @@ with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
     info = []
     print(Fore.LIGHTYELLOW_EX + "\n\nDONE")
     print(Style.RESET_ALL)
-    c=0
     for data in data_tag:
         pricing_data = data.find('div', class_="listing_unit_price_wrapper")
         bills_span = pricing_data.findAll('span')[1]
-        bills = pricing_data.findAll('span')[1].text.replace("+", "").strip()
+        bills = bills_span.text.replace("+", "").strip()
         bills_span.extract()
         if bills in ["", "all in", "per month", "all in with bills included", "a month", "with all bills", "with bills"]:
             bills = "Bills Included"
@@ -50,7 +49,7 @@ with open(SOURCE_FILE, mode='w', newline='', encoding='utf-8') as file:
             bed = "N/A"
 
         info.append([int(price),bills,available, bed, area,location])
-        
+     
     sorted_info = sorted(info, key=lambda x: x[0], reverse=True)
     writer.writerows(sorted_info)
 
